@@ -127,8 +127,8 @@ class trainThread(threading.Thread):
 if __name__ == "__main__":
     json_str = {"jobId":"", 
                 "jobName":"", 
-                "sample":"/home/yanpan/Test/", 
-                "parameterPath":"/home/yanpan/Study/Github/detectron_ADC/configs/getting_started/tutorial_1gpu_e2e_faster_rcnn_R-50-FPN.yaml", 
+                "sample":"/home/szl/yanpan/Test/", 
+                "parameterPath":"/home/szl/yanpan/detectron_ADC/configs/getting_started/tutorial_1gpu_e2e_faster_rcnn_R-50-FPN.yaml", 
                 "modelParameter":{
                     "steps":[0,],
                     "max_iter":60000, 
@@ -140,6 +140,6 @@ if __name__ == "__main__":
                     "max_size":1333,  
                 }, 
                 "model_Path":"output_test"}
-    detectron_path = "/home/yanpan/Study/Github/detectron_ADC"
+    detectron_path = "/home/szl/yanpan/detectron_ADC"
     thread = trainThread(json_str, detectron_path)
     thread.run()
