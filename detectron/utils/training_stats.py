@@ -88,6 +88,7 @@ class TrainingStats(object):
                 cur_iter == cfg.SOLVER.MAX_ITER - 1):
             stats = self.GetStats(cur_iter, lr)
             log_json_stats(stats)
+            return (cur_iter, stats)
 
     def GetStats(self, cur_iter, lr):
         eta_seconds = self.iter_timer.average_time * (

@@ -93,7 +93,7 @@ class trainThread(threading.Thread):
         # non-deterministic cudnn functions).
         np.random.seed(cfg.RNG_SEED)
         # Execute the training run
-        checkpoints = train_model()
+        checkpoints, losses = train_model()
         # Test the trained model
         self.test_model(checkpoints["final"])
 
@@ -118,9 +118,11 @@ class trainThread(threading.Thread):
         assert_and_infer_cfg()
         if not osp.exists(self.jsondata["model_Path"]):
             os.mkdir(self.jsondata["model_Path"])
-        with open("%s/model.yaml"%self.jsondata["model_Path"], "w") as src:
+        with open(osp.join(self.jsondata["model_Path"], "model.yaml"), "w") as src:
             src.write(yaml.dump(cfg))
-        pprint(cfg)
+        with open(osp.join(self.jsondata["model_Path"], "classes.txt"), "w") as src:
+            for category in categories:
+                src.write(category)
         self.checkSymLink()
         self.beginTrain()
 

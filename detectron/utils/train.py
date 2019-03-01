@@ -58,6 +58,7 @@ def train_model():
     setup_model_for_training(model, weights_file, output_dir)
     training_stats = TrainingStats(model)
     CHECKPOINT_PERIOD = int(cfg.TRAIN.SNAPSHOT_ITERS / cfg.NUM_GPUS)
+    losses = list()
 
     for cur_iter in range(start_iter, cfg.SOLVER.MAX_ITER):
         if model.roi_data_loader.has_stopped():
@@ -69,7 +70,9 @@ def train_model():
             nu.print_net(model)
         training_stats.IterToc()
         training_stats.UpdateIterStats()
-        training_stats.LogIterStats(cur_iter, lr)
+        res = training_stats.LogIterStats(cur_iter, lr)
+        if res:
+            losses.append(res)
 
         if (cur_iter + 1) % CHECKPOINT_PERIOD == 0 and cur_iter > start_iter:
             checkpoints[cur_iter] = os.path.join(
@@ -90,7 +93,7 @@ def train_model():
     nu.save_model_to_weights_file(checkpoints['final'], model)
     # Shutdown data loading threads
     model.roi_data_loader.shutdown()
-    return checkpoints
+    return checkpoints, losses
 
 
 def handle_critical_error(model, msg):
