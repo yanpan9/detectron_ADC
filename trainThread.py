@@ -116,7 +116,7 @@ class trainThread(threading.Thread):
         parameter_l = ["MODEL.NUM_CLASSES", len(categories)+1]
         merge_cfg_from_list(parameter_l)
         assert_and_infer_cfg()
-        if osp.exists(self.jsondata["model_Path"]):
+        if not osp.exists(self.jsondata["model_Path"]):
             os.mkdir(self.jsondata["model_Path"])
         with open("%s/model.yaml"%self.jsondata["model_Path"], "w") as src:
             src.write(yaml.dump(cfg))
