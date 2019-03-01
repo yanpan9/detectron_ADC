@@ -120,8 +120,7 @@ class trainThread(threading.Thread):
             src.write(yaml.dump(cfg))
         pprint(cfg)
         self.checkSymLink()
-        
-        pass
+        self.beginTrain()
 
 if __name__ == "__main__":
     json_str = {"jobId":"", 
