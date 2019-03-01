@@ -11,8 +11,7 @@ import shutil
 
 from os import path as osp
 from random import sample
-#from detectron.utils.vocconverter import convertXml2Json
-from vocconverter import convertXml2Json
+from detectron.utils.vocconverter import convertXml2Json
 
 def convert(root_path, train_size=0.8):
     images = os.listdir(osp.join(root_path, "images"))
@@ -25,14 +24,19 @@ def convert(root_path, train_size=0.8):
     
     annotation_path, img_path, val_txt_path, val_anno_path = create_dirs(root_path)
     for name in files:
-        shutil.copy(osp.join(root_path, "images", name+".jpg"), img_path)
+        file_path = osp.join(root_path, "images", name)
+        if osp.exists(file_path+".jpg"):
+            shutil.copy(file_path+".jpg", osp.join(img_path, name+".jpg"))
+        else:
+            shutil.copy(file_path+".JPG", osp.join(img_path, name+".jpg"))
     if len(os.listdir(annotation_path))==0:
         val_files = convert_xml_to_json(root_path, annotation_path, files, train_size)
         with open(osp.join(val_txt_path, "val.txt"), "w") as dst:
             for name in val_files:
                 dst.write(name+"\n")
                 shutil.copy(osp.join(root_path, "labels", name+".xml"), val_anno_path)
-
+    return annotation_path
+    
 def create_dirs(root_path):
     dataset_path = osp.join(root_path, "VOC2007")
     if not osp.exists(dataset_path):
