@@ -113,7 +113,7 @@ class trainThread(threading.Thread):
         self.checkPath(sample)
         anno_path = convert(sample)
         categories = readCategoryFromJson(osp.join(anno_path, "voc_2007_train.json"))
-        parameter_l = ["MODEL.NUM_CLASSES", len(categories)]
+        parameter_l = ["MODEL.NUM_CLASSES", len(categories)+1]
         merge_cfg_from_list(parameter_l)
         assert_and_infer_cfg()
         if osp.exists(self.jsondata["model_Path"]):
