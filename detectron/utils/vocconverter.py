@@ -176,3 +176,13 @@ class convertXml2Json:
 
         with open(json_file, "w") as dst:
             json.dump(self.coco, dst)
+
+def readCategoryFromJson(filepath):
+    with open(filepath, "r") as src:
+        json_dict = json.load(src)
+        categories = [elem["name"] for elem in json_dict["categories"]]
+    return categories
+
+if __name__ == "__main__":
+    res = readCategoryFromJson("/home/yanpan/Test/VOC2007/annotations/voc_2007_val.json")
+    print(res)
