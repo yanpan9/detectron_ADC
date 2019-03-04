@@ -99,7 +99,7 @@ class trainThread(threading.Thread):
         checkpoints, losses = train_model()
         # Test the trained model
         self.test_model(checkpoints["final"])
-        dataset_name, proposal_file = get_inference_dataset(cfg.TEST.DATASETS)
+        dataset_name, proposal_file = get_inference_dataset(0)
         output_dir = get_output_dir(dataset_name, training=False)
         with open(osp.join(output_dir, "res.pkl"), "r") as src:
             mAP = pickle.load(src)
@@ -133,8 +133,8 @@ class trainThread(threading.Thread):
             for category in categories:
                 src.write(category)
         self.checkSymLink()
-        losses = self.beginTrain()
-        return losses
+        losses, mAP = self.beginTrain()
+        return losses, mAP
 
 if __name__ == "__main__":
     json_str = {"jobId":"", 
