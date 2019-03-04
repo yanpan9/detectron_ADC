@@ -53,7 +53,7 @@ def train_model():
     model, weights_file, start_iter, checkpoints, output_dir = create_model()
     if 'final' in checkpoints:
         # The final model was found in the output directory, so nothing to do
-        return checkpoints
+        return checkpoints, list()
 
     setup_model_for_training(model, weights_file, output_dir)
     training_stats = TrainingStats(model)
