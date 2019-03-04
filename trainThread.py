@@ -8,6 +8,7 @@ import cv2
 import sys
 import json
 import yaml
+import pickle
 import shutil
 import logging
 import threading
@@ -24,7 +25,9 @@ from detectron.core.config import assert_and_infer_cfg
 from detectron.core.config import cfg
 from detectron.core.config import merge_cfg_from_file
 from detectron.core.config import merge_cfg_from_list
+from detectron.core.config import get_output_dir
 from detectron.core.test_engine import run_inference
+from detectron.core.test_engine import get_inference_dataset
 from detectron.utils.logging import setup_logging
 from detectron.utils.convert_datasets_to_voc import convert
 from detectron.utils.vocconverter import readCategoryFromJson
@@ -96,8 +99,12 @@ class trainThread(threading.Thread):
         checkpoints, losses = train_model()
         # Test the trained model
         self.test_model(checkpoints["final"])
+        dataset_name, proposal_file = get_inference_dataset(cfg.TEST.DATASETS)
+        output_dir = get_output_dir(dataset_name, training=False)
+        with open(osp.join(output_dir, "res.pkl"), "r") as src:
+            mAP = pickle.load(src)
 
-        return losses
+        return losses, mAP
 
     def test_model(self, model_file):
         """Test a model."""
@@ -147,5 +154,5 @@ if __name__ == "__main__":
                 "model_Path":"output_test"}
     detectron_path = "/home/szl/yanpan/detectron_ADC"
     thread = trainThread(json_str, detectron_path)
-    losses = thread.run()
-    print(losses)
+    losses, mAP = thread.run()
+    print(losses, mAP)

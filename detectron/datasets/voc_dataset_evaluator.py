@@ -114,6 +114,7 @@ def _do_python_eval(json_dataset, salt, output_dir='output'):
     logger.info('VOC07 metric? ' + ('Yes' if use_07_metric else 'No'))
     if not os.path.isdir(output_dir):
         os.mkdir(output_dir)
+    mAP_dict = dict()
     for _, cls in enumerate(json_dataset.classes):
         if cls == '__background__':
             continue
@@ -124,9 +125,13 @@ def _do_python_eval(json_dataset, salt, output_dir='output'):
             use_07_metric=use_07_metric)
         aps += [ap]
         logger.info('AP for {} = {:.4f}'.format(cls, ap))
+        mAP_dict[cls]=ap
         res_file = os.path.join(output_dir, cls + '_pr.pkl')
         save_object({'rec': rec, 'prec': prec, 'ap': ap}, res_file)
     logger.info('Mean AP = {:.4f}'.format(np.mean(aps)))
+    mAP_dict["mmAP"]=np.mean(aps)
+    res_file = os.path.join(output_dir, "res.pkl")
+    save_object(mAP_dict, res_file)
     logger.info('~~~~~~~~')
     logger.info('Results:')
     for ap in aps:
