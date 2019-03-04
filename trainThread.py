@@ -97,6 +97,8 @@ class trainThread(threading.Thread):
         # Test the trained model
         self.test_model(checkpoints["final"])
 
+        return losses
+
     def test_model(self, model_file):
         """Test a model."""
         # Clear memory before inference
@@ -124,7 +126,8 @@ class trainThread(threading.Thread):
             for category in categories:
                 src.write(category)
         self.checkSymLink()
-        self.beginTrain()
+        losses = self.beginTrain()
+        return losses
 
 if __name__ == "__main__":
     json_str = {"jobId":"", 
@@ -133,7 +136,7 @@ if __name__ == "__main__":
                 "parameterPath":"/home/szl/yanpan/detectron_ADC/configs/getting_started/tutorial_1gpu_e2e_faster_rcnn_R-50-FPN.yaml", 
                 "modelParameter":{
                     "steps":[0,],
-                    "max_iter":60000, 
+                    "max_iter":5000, 
                     "base_lr":0.01, 
                     "gamma":0.1, 
                     "nms":0.5, 
@@ -144,4 +147,5 @@ if __name__ == "__main__":
                 "model_Path":"output_test"}
     detectron_path = "/home/szl/yanpan/detectron_ADC"
     thread = trainThread(json_str, detectron_path)
-    thread.run()
+    losses = thread.run()
+    print(losses)
