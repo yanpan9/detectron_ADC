@@ -71,7 +71,7 @@ class trainThread(threading.Thread):
             and osp.exists(osp.join(sample, "labels"))):
                 print("Please check datasets at %s!"%sample)
                 sys.exit()
-        if osp.exists(osp.join(root_dir, self.datasets_name+self.datasets_year)):
+        if osp.exists(osp.join(root_dir, self.datasets_name+self.datasets_year)) and osp.exists(osp.join(root_dir, self.datasets_name+self.datasets_year, "VOCdevkit2007", "VOC2007", "ImageSets", "Main", "val.txt")):
             if retrain:
                 shutil.rmtree(osp.join(sample, self.datasets_name+self.datasets_year))
                 print("Clean datasets dir.")
@@ -128,7 +128,7 @@ class trainThread(threading.Thread):
 
     def run(self):
         split_l = self.jsondata["sample"].split(",")
-        samples = [sample for sample in split_l if sample]
+        samples = [sample.strip() for sample in split_l if sample]
         root_dir = "/".join(samples[0].rstrip("/").split("/")[:-1])
         if not all([sample.startswith(root_dir) for sample in samples]):
             print("Please make sure all the samples in the same parent path.")

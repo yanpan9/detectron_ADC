@@ -80,9 +80,8 @@ class convertXml2Json:
         annotation_item['id'] = self.annotation_id
         self.coco['annotations'].append(annotation_item)
 
-    def parseXmlFiles(self, xml_path, xml_list): 
+    def parseXmlFiles(self, xml_list): 
         for name in xml_list:
-            f = osp.join(xml_path, name+".xml")
             
             bndbox = dict()
             size = dict()
@@ -92,9 +91,6 @@ class convertXml2Json:
             size['width'] = None
             size['height'] = None
             size['depth'] = None
-
-            xml_file = os.path.join(xml_path, f)
-            print(xml_file)
 
             tree = ET.parse(xml_file)
             root = tree.getroot()
