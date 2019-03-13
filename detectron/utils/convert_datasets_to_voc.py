@@ -35,7 +35,7 @@ def convert(root_path, samples, flag, train_size=0.8):
             val_files_fp.extend([osp.join(sample, "labels", file_name+".xml") for file_name in val_return])
             copy_imgs(sample, img_path, files)
 
-        convert_xml_to_json(root_path, annotation_path, train_files_fp, val_files_fp)
+        convert_xml_to_json(annotation_path, train_files_fp, val_files_fp)
         with open(osp.join(val_txt_path, "val.txt"), "w") as dst:
             for name, xml_path in zip(val_files,val_files_fp):
                 dst.write(name+"\n")
@@ -57,13 +57,12 @@ def create_dirs(root_path):
 
     return annotation_path, img_path, val_txt_path, val_anno_path
 
-def convert_xml_to_json(root_path, annotation_path, train_xmls, val_xmls):
-    
+def convert_xml_to_json(annotation_path, train_xmls, val_xmls):
     converter = convertXml2Json()
-    converter.parseXmlFiles(osp.join(root_path, "labels"), train_xmls)
+    converter.parseXmlFiles(train_xmls)
     converter.writeToJSON(osp.join(annotation_path, "voc_2007_train.json"))
     converter = convertXml2Json()
-    converter.parseXmlFiles(osp.join(root_path, "labels"), val_xmls)
+    converter.parseXmlFiles(val_xmls)
     converter.writeToJSON(osp.join(annotation_path, "voc_2007_val.json"))
     return True
 
