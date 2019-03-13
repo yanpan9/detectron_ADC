@@ -81,7 +81,7 @@ class convertXml2Json:
         self.coco['annotations'].append(annotation_item)
 
     def parseXmlFiles(self, xml_list): 
-        for name in xml_list:
+        for xml_file in xml_list:
             
             bndbox = dict()
             size = dict()
