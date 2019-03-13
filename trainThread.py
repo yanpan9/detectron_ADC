@@ -130,7 +130,7 @@ class trainThread(threading.Thread):
         split_l = self.jsondata["sample"].split(",")
         samples = [sample for sample in split_l if sample]
         root_dir = samples[0].rstrip("/").split("/")
-        if not all([sample.beginswith(root_dir) for sample in samples]):
+        if not all([sample.startswith(root_dir) for sample in samples]):
             print("Please make sure all the samples in the same parent path.")
             sys.exit()
         self.parseJsonToCFG(cfg)
