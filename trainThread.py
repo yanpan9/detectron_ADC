@@ -81,11 +81,11 @@ class trainThread(threading.Thread):
         else:
             return False
 
-    def checkSymLink(self):
+    def checkSymLink(self, root_dir):
         link_path = osp.join(self.detectron, "detectron", "datasets", "data", "VOC2007")
         if osp.islink(link_path):
             os.unlink(link_path)
-        os.symlink(osp.join(self.jsondata["sample"], "VOC2007"), link_path)
+        os.symlink(osp.join(root_dir, "VOC2007"), link_path)
 
     def beginTrain(self):
         workspace.GlobalInit(
@@ -149,7 +149,7 @@ class trainThread(threading.Thread):
         with open(osp.join(self.jsondata["model_Path"], "classes.txt"), "w") as src:
             for category in categories:
                 src.write(category)
-        self.checkSymLink()
+        self.checkSymLink(root_dir)
         losses, mAP = self.beginTrain()
         return losses, mAP
 
