@@ -157,7 +157,7 @@ class trainThread(threading.Thread):
 if __name__ == "__main__":
     json_str = {"jobId":"", 
                 "jobName":"", 
-                "sample":"/home/szl/yanpan/Test/, ", 
+                "sample":"/home/szl/yanpan/Pandas/FB, /home/szl/yanpan/Pandas/FO, /home/szl/yanpan/Pandas/FP, /home/szl/yanpan/Pandas/HD,/home/szl/yanpan/Pandas/NP, /home/szl/yanpan/Pandas/PI, /home/szl/yanpan/Pandas/PN, /home/szl/yanpan/Pandas/XO", 
                 "parameterPath":"/home/szl/yanpan/detectron_ADC/configs/getting_started/tutorial_1gpu_e2e_faster_rcnn_R-50-FPN.yaml", 
                 "modelParameter":{
                     "steps":[0,],
