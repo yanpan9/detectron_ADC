@@ -137,7 +137,7 @@ class trainThread(threading.Thread):
         flag = self.checkPath(root_dir, samples, self.retrain)
         anno_path = convert(root_dir, samples, flag)
         print("Dataset Create Success!")
-        categories = readCategoryFromJson(osp.join(anno_path, "%s_%s_train.json"%(self.datasets_name.upper(), self.datasets_year)))
+        categories = readCategoryFromJson(osp.join(anno_path, "%s_%s_train.json"%(self.datasets_name.lower(), self.datasets_year)))
         # Remember to undo the gpu number setting
         parameter_l = ["MODEL.NUM_CLASSES", len(categories)+1, "NUM_GPUS", 2]
         merge_cfg_from_list(parameter_l)
