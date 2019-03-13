@@ -38,10 +38,13 @@ c2_utils.import_detectron_ops()
 cv2.ocl.setUseOpenCL(False)
 
 class trainThread(threading.Thread):
-    def __init__(self,jsondata, detectron_path):
+    def __init__(self,jsondata, detectron_path, retrain=False):
         super(trainThread,self).__init__()
         self.jsondata=jsondata
         self.detectron=detectron_path
+        self.retrain = retrain
+        self.datasets_name = "VOC"
+        self.datasets_year = "2007"
 
     def parseJsonToCFG(self, cfg):
         merge_cfg_from_file(self.jsondata["parameterPath"])
@@ -62,14 +65,21 @@ class trainThread(threading.Thread):
         merge_cfg_from_list(parameter_l)
         
 
-    def checkPath(self, sample):
-        if not (osp.exists(osp.join(sample, "images")) 
-        and osp.exists(osp.join(sample, "labels"))):
-            print("Please check datasets at %s!"%sample)
-            sys.exit()
-        elif osp.exists(osp.join(sample, "VOC2007")):
-            shutil.rmtree(osp.join(sample, "VOC2007"))
-            print("Clean datasets dir.")
+    def checkPath(self, root_dir, samples, retrain):
+        for sample in samples:
+            if not (osp.exists(osp.join(sample, "images")) 
+            and osp.exists(osp.join(sample, "labels"))):
+                print("Please check datasets at %s!"%sample)
+                sys.exit()
+        if osp.exists(osp.join(root_dir, self.datasets_name+self.datasets_year)):
+            if retrain:
+                shutil.rmtree(osp.join(sample, self.datasets_name+self.datasets_year))
+                print("Clean datasets dir.")
+                return False
+            else:
+                return True
+        else:
+            return False
 
     def checkSymLink(self):
         link_path = osp.join(self.detectron, "detectron", "datasets", "data", "VOC2007")
@@ -99,7 +109,7 @@ class trainThread(threading.Thread):
         checkpoints, losses = train_model()
         # Test the trained model
         self.test_model(checkpoints["final"])
-        dataset_name, proposal_file = get_inference_dataset(0)
+        dataset_name, _ = get_inference_dataset(0)
         output_dir = get_output_dir(dataset_name, training=False)
         with open(osp.join(output_dir, "res.pkl"), "r") as src:
             mAP = pickle.load(src)
@@ -117,11 +127,19 @@ class trainThread(threading.Thread):
         )
 
     def run(self):
-        sample = self.jsondata["sample"] 
+        split_l = self.jsondata["sample"].split(",")
+        samples = [sample for sample in split_l if sample]
+        root_dir = samples[0].rstrip("/").split("/")
+        if not all([sample.beginswith(root_dir) for sample in samples]):
+            print("Please make sure all the samples in the same parent path.")
+            sys.exit()
         self.parseJsonToCFG(cfg)
-        self.checkPath(sample)
-        anno_path = convert(sample)
-        categories = readCategoryFromJson(osp.join(anno_path, "voc_2007_train.json"))
+        flag = self.checkPath(root_dir, samples, self.retrain)
+        anno_path = convert(root_dir, samples, flag)
+        print("Dataset Create Success!")
+        sys.exit()
+        categories = readCategoryFromJson(osp.join(anno_path, "%s_%s_train.json"%(self.datasets_name.upper(), self.datasets_year)))
+        # Remember to undo the gpu number setting
         parameter_l = ["MODEL.NUM_CLASSES", len(categories)+1, "NUM_GPUS", 2]
         merge_cfg_from_list(parameter_l)
         assert_and_infer_cfg()
@@ -139,7 +157,7 @@ class trainThread(threading.Thread):
 if __name__ == "__main__":
     json_str = {"jobId":"", 
                 "jobName":"", 
-                "sample":"/home/szl/yanpan/Test/", 
+                "sample":"/home/szl/yanpan/Test/, ", 
                 "parameterPath":"/home/szl/yanpan/detectron_ADC/configs/getting_started/tutorial_1gpu_e2e_faster_rcnn_R-50-FPN.yaml", 
                 "modelParameter":{
                     "steps":[0,],
