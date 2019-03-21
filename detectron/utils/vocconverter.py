@@ -23,6 +23,10 @@ class convertXml2Json:
         self.image_id = 20180000000
         self.annotation_id = 0
 
+    def initCategories(self, category_list):
+        self.coco["categories"]=category_list
+        self.category_set = {category["name"]:category["ID"] for category in category_list}
+
     def addCatItem(self, name):
         category_item = dict()
         category_item['supercategory'] = 'none'

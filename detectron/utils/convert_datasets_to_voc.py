@@ -58,12 +58,13 @@ def create_dirs(root_path):
     return annotation_path, img_path, val_txt_path, val_anno_path
 
 def convert_xml_to_json(annotation_path, train_xmls, val_xmls):
-    converter = convertXml2Json()
-    converter.parseXmlFiles(train_xmls)
-    converter.writeToJSON(osp.join(annotation_path, "voc_2007_train.json"))
-    converter = convertXml2Json()
-    converter.parseXmlFiles(val_xmls)
-    converter.writeToJSON(osp.join(annotation_path, "voc_2007_val.json"))
+    converter_tr = convertXml2Json()
+    converter_tr.parseXmlFiles(train_xmls)
+    converter_tr.writeToJSON(osp.join(annotation_path, "voc_2007_train.json"))
+    converter_val = convertXml2Json()
+    converter_val.initCategories(converter_tr.coco["categories"])
+    converter_val.parseXmlFiles(val_xmls)
+    converter_val.writeToJSON(osp.join(annotation_path, "voc_2007_val.json"))
     return True
 
 def train_val_split(files, train_size):
