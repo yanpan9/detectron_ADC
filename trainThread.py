@@ -1,3 +1,5 @@
+#-*- coding: utf-8 -*-
+
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -139,7 +141,7 @@ class trainThread(threading.Thread):
         print("Dataset Create Success!")
         categories = readCategoryFromJson(osp.join(anno_path, "%s_%s_train.json"%(self.datasets_name.lower(), self.datasets_year)))
         # Remember to undo the gpu number setting
-        parameter_l = ["MODEL.NUM_CLASSES", len(categories)+1, "NUM_GPUS", 2]
+        parameter_l = ["MODEL.NUM_CLASSES", len(categories)+1, "NUM_GPUS", 4,"TRAIN.IMS_PER_BATCH",1]
         merge_cfg_from_list(parameter_l)
         assert_and_infer_cfg()
         if not osp.exists(self.jsondata["model_Path"]):
@@ -156,20 +158,20 @@ class trainThread(threading.Thread):
 if __name__ == "__main__":
     json_str = {"jobId":"", 
                 "jobName":"", 
-                "sample":"/home/szl/yanpan/Pandas/FB, /home/szl/yanpan/Pandas/FO, /home/szl/yanpan/Pandas/FP, /home/szl/yanpan/Pandas/HD,/home/szl/yanpan/Pandas/NP, /home/szl/yanpan/Pandas/PI, /home/szl/yanpan/Pandas/PN, /home/szl/yanpan/Pandas/XO", 
-                "parameterPath":"/home/szl/yanpan/detectron_ADC/configs/getting_started/tutorial_1gpu_e2e_faster_rcnn_R-50-FPN.yaml", 
+                "sample":"/root/datasets/Pandas/FB, /root/datasets/Pandas/FO, /root/datasets/Pandas/FP, /root/datasets/Pandas/HD,/root/datasets/Pandas/NP, /root/datasets/Pandas/PI, /root/datasets/Pandas/PN, /root/datasets/Pandas/XO", 
+                "parameterPath":"/root/detectron_ADC/configs/12_2017_baselines/e2e_faster_rcnn_X-101-64x4d-FPN_2x.yaml", 
                 "modelParameter":{
-                    "steps":[0,],
-                    "max_iter":5000, 
+                    "steps":[0,70000,90000],
+                    "max_iter":100000, 
                     "base_lr":0.01, 
                     "gamma":0.1, 
                     "nms":0.5, 
-                    "scales":(800,), 
-                    "scale":800, 
+                    "scales":(1000,), 
+                    "scale":1000, 
                     "max_size":1333,  
                 }, 
                 "model_Path":"output_test"}
-    detectron_path = "/home/szl/yanpan/detectron_ADC"
+    detectron_path = "/root/detectron_ADC"
     thread = trainThread(json_str, detectron_path)
     losses, mAP = thread.run()
     print(losses, mAP)
