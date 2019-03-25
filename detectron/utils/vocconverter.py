@@ -25,7 +25,7 @@ class convertXml2Json:
 
     def initCategories(self, category_list):
         self.coco["categories"]=category_list
-        self.category_set = {category["name"]:category["ID"] for category in category_list}
+        self.category_set = {category["name"]:category["id"] for category in category_list}
 
     def addCatItem(self, name):
         category_item = dict()
