@@ -75,11 +75,15 @@ class trainThread(threading.Thread):
                 sys.exit()
         if osp.exists(osp.join(root_dir, self.datasets_name+self.datasets_year)) and osp.exists(osp.join(root_dir, self.datasets_name+self.datasets_year, "VOCdevkit2007", "VOC2007", "ImageSets", "Main", "val.txt")):
             if retrain:
-                shutil.rmtree(osp.join(sample, self.datasets_name+self.datasets_year))
+                shutil.rmtree(osp.join(root_dir, self.datasets_name+self.datasets_year))
                 print("Clean datasets dir.")
                 return False
             else:
                 return True
+        elif osp.exists(osp.join(root_dir, self.datasets_name+self.datasets_year)):
+            shutil.rmtree(osp.join(root_dir, self.datasets_name+self.datasets_year))
+            print("Clean datasets dir.")
+            return False
         else:
             return False
 
