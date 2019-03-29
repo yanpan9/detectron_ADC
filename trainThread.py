@@ -117,7 +117,7 @@ class trainThread(threading.Thread):
         self.test_model(checkpoints["final"])
         dataset_name, _ = get_inference_dataset(0)
         output_dir = get_output_dir(dataset_name, training=False)
-        with open(osp.join(output_dir, "res.pkl"), "r") as src:
+        with open(osp.join(output_dir, "res.pkl"), "rb") as src:
             mAP = pickle.load(src)
 
         return losses, mAP
